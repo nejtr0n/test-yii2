@@ -1,0 +1,31 @@
+version: '3.6'
+
+volumes:
+  mysql_data:
+  
+services:
+  mysql:
+    build: ./infra/mysql
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pass
+      
+  php:
+    build: ./infra/php
+    volumes:
+    - ./www:/var/www/html
+
+  front:
+    build: ./infra/nginx
+    ports:
+    - 80:80
+    volumes:
+    - ./www:/var/www/html
+    - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
